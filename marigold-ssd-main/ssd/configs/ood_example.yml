@@ -1,0 +1,14 @@
+# One checkpoint is reused for every listed OOD dataset.
+model: weights/ssd
+foundation: weights/GonzaloMG_marigold-e2e-ft-depth
+datasets:
+  NYUv2: data/nyu-v2
+  ScanNet: data/scannet-dc2
+  VOID: data/void
+  KITTI: data/kitti-depth
+  DDAD: data/ddad-ogni-dc
+  iBims1: data/ibims-1
+inference:
+  diffusion_steps: 1
+  noise: zeros
+  alignment: least_square

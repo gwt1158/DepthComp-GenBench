@@ -1,0 +1,10 @@
+RGB = "rgb"
+DEPTH_METRIC = "depth_metric"
+DEPTH_METRIC_MASK = "depth_metric_mask"
+DEPTH_RELATIVE = "depth_relative"
+DEPTH_RELATIVE_MASK = "depth_relative_mask"
+NORMALS = "normals"
+GT_RELATIVE = "gt_relative"
+GT_METRIC = "gt_metric"
+GT_METRIC_MASK = "gt_metric_mask"
+INVALID_DEPTH = -10.0

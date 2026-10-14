@@ -1,0 +1,11 @@
+# Example root-relative OOD layout. Reuse one PSD checkpoint for every dataset.
+datasets:
+  VOID1500: data/ood/VOID1500
+  SUNRGBD: data/ood/SUNRGBD
+  DIODEi: data/ood/DIODE/indoor
+  DIODEo: data/ood/DIODE/outdoor
+  ETH3D: data/ood/ETH3D
+  Hypersim: data/ood/Hypersim
+  KITTI360: data/ood/KITTI360
+sparse_pattern: scatter_001
+checkpoint: weights/psd_nk_depthanything.pth

@@ -1,0 +1,9 @@
+torch
+torchvision
+numpy
+Pillow
+h5py
+scipy
+pyyaml
+# optional for GFLOPs: thop or fvcore
+thop

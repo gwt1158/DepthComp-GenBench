@@ -1,0 +1,8 @@
+__pycache__
+.DS_Store
+wandb
+.vscode/
+weights/
+data/
+outputs/
+*.pyc

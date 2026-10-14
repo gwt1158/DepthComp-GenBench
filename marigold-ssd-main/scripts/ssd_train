@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+PROJECT_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+DATASETS_DIR="${DATASETS_DIR:-${PROJECT_ROOT}/data}"
+MODELS_DIR="${MODELS_DIR:-${PROJECT_ROOT}/weights}"
+cd "${PROJECT_ROOT}"
+
+training_name="ssd"
+
+accelerate launch -m ssd.model.train_unetdecmid \
+  --pretrained_model_name_or_path "GonzaloMG/marigold-e2e-ft-depth" \
+  --resume_from_checkpoint "latest" \
+  --train_dataset "ssd.datasets.HypersimDiffusionE2E" "ssd.datasets.VkittiDiffusionE2E" \
+  --train_dataset_subset "train" "train" \
+  --train_dataset_path "${DATASETS_DIR}/diffusion-e2e-ft-datasets/hypersim/processed" "${DATASETS_DIR}/diffusion-e2e-ft-datasets/virtual_kitti_2" \
+  --train_split 9 1 \
+  --train_preprocessing "ssd.preprocessing.hypersim_vae_scaling" "ssd.preprocessing.vkitti_vae_scaling" \
+  --modality "dc" \
+  --naive_lidar 0.0016276 \
+  --naive_lidar_max 0.05 \
+  --max_train_steps 20000 \
+  --checkpointing_steps 1000 \
+  --checkpoints_total_limit 4 \
+  --train_batch_size 1 \
+  --gradient_accumulation_steps 32 \
+  --learning_rates 0.000003 0.00003 \
+  --lr_total_iter_length 20000 \
+  --lr_exp_warmup_steps 100 \
+  --mixed_precision "no" \
+  --output_dir "${MODELS_DIR}/ssd/${training_name}" \
+  --initialize_dc "zeros" \
+  --loss "ssd.loss.L1Loss" \
+  --report_to "wandb" \
+  --tracker_project_name "ssd" \
+  --wandb_name "${training_name}" \
+  --dataloader_num_workers 8

@@ -1,0 +1,48 @@
+protocol_name: GeoLayerNet-Comparison-Protocol-V2
+path_policy: workspace_relative_paths
+legacy_paths_allowed: false
+directory_scanning_allowed: false
+
+nyu:
+  config: GeoLayerNet/configs/geolayernet_final_nyu48k_1pct_fullval.yaml
+  root: GeoLayerNet/data/nyu48k_1pct
+  train_phase: train
+  val_phase: val
+  test_phase: test
+  expected_train: 47584
+  expected_val: 654
+  expected_test: 654
+  sparse_policy: fixed_disk_1pct
+  max_depth_m: 10.0
+  depth_scale_m: 10.0
+  evaluation_size: [228, 304]
+
+kitti:
+  config: GeoLayerNet/configs/geolayernet_kitti_psd_fullval.yaml
+  root: GeoLayerNet/data/kitti_official_raw
+  train90: GeoLayerNet/data/kitti_geolayernet/protocol/train90.jsonl
+  dev10: GeoLayerNet/data/kitti_geolayernet/protocol/dev10.jsonl
+  train_full: GeoLayerNet/data/kitti_geolayernet/protocol/train_full.jsonl
+  val1000: GeoLayerNet/data/kitti_geolayernet/protocol/val1000.jsonl
+  expected_train90: 77308
+  expected_dev10: 8590
+  expected_train_full: 85898
+  expected_val1000: 1000
+  sparse_policy: original_lidar
+  png_depth_divisor: 256.0
+  max_depth_m: 80.0
+  depth_scale_m: 80.0
+  evaluation_size: [228, 304]
+
+ood:
+  config_dir: GeoLayerNet/configs/ood_example.yaml
+  root: GeoLayerNet/data/ood
+  input_resolution: [228, 304]
+  metric_resolution: [228, 304]
+  prediction_resolution: [228, 304]
+  visualization_resolution: [228, 304]
+  rgb_resize: bilinear
+  sparse_target_mask_resize: nearest
+  intrinsics_resize: exactly_once_from_npz_rgb_size
+  scannet_status: not_evaluated
+  expected_existing_domains: 16

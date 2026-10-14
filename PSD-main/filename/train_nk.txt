@@ -1,0 +1,1 @@
+NYUv2 train/dining_room_0031/02366.h5 N N

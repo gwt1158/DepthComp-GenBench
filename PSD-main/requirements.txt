@@ -1,0 +1,12 @@
+huggingface-hub
+matplotlib
+numba
+numpy
+omegaconf
+opencv-python
+Pillow
+scikit-image
+tensorboardX
+timm
+torch
+torchvision

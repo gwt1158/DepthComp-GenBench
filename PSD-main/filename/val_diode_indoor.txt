@@ -1,0 +1,1 @@
+00019_00183_indoors_000_010.png 00019_00183_indoors_000_010_depth.npy 00019_00183_indoors_000_010_depth_mask.npy 

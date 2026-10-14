@@ -1,0 +1,13 @@
+h5py
+hydra-core
+mmcv==1.4.4
+mmsegmentation==0.22.1
+numpy
+opencv-python
+Pillow
+tensorboard
+tensorboardX
+timm
+torch
+torchvision
+tqdm

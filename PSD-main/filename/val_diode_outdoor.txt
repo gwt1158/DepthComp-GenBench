@@ -1,0 +1,1 @@
+00023_00199_outdoor_000_020.png 00023_00199_outdoor_000_020_depth.npy 00023_00199_outdoor_000_020_depth_mask.npy 

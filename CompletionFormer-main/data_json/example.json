@@ -1,0 +1,11 @@
+{
+  "train": [
+    {"filename": "train/scene/sample.h5"}
+  ],
+  "val": [
+    {"filename": "val/scene/sample.h5"}
+  ],
+  "test": [
+    {"filename": "test/scene/sample.h5"}
+  ]
+}

@@ -1,0 +1,73 @@
+# GeoLayerNet final — NYU48K 1pct data, full-validation selection.
+
+dataset:
+  dataroot: data/nyu48k_1pct
+  dataset_mode: rgbd_completion
+  dataset_tag: nyu48k_1pct
+  preprocess: none
+  input_nc: 4
+  depth_unit_scale: 10
+  teacher_depth_dir: teacher_depth
+
+model:
+  name: GeoLayerNet
+  preset: final
+  num_layers: 4
+  layer_encoder: acm_dual
+  layer_source: sparse_depth
+  sparse_layer_support_mode: gaussian_bilateral
+  sparse_layer_expand_radius: 11
+  sparse_layer_sigma_xy: 3.0
+  sparse_layer_rgb_guided: true
+  sparse_layer_rgb_sigma: 0.1
+  residual_scale: 0.1
+  output_mode: safe
+  relation_steps: 2
+  gate_bias_init: -3.0
+  # ---- enhancement switches (GeoLayerNet-main) ----
+  use_coarse_densifier: true
+  coarse_densifier_radii: "5,11"
+  coarse_densifier_rgb_guided: true
+  proxy_use_coarse: true
+  selective_residual: true
+
+train:
+  seed: 42
+  batch_size: 4
+  num_threads: 4
+  lr: 0.0001
+  lr_policy: cosine
+  beta1: 0.5
+  weight_decay: 0.0001
+  n_epochs: 30
+  n_epochs_decay: 30
+  cosine_t_max: 60
+  residual_warmup_epochs: 5
+  grad_clip: 1.0
+  val_freq: 1
+  val_phase: val
+  val_num_test: 100000
+  val_best_metric: SafeMissing_RMSE_m
+
+loss:
+  lambda_teacher_hf: 1.0
+  lambda_teacher_grad: 1.0
+  lambda_teacher_normal: 0.5
+  # optional sharpness supervision (OFF in main; tuned in the edge* configs)
+  grad_loss_weight: 0.1
+  boundary_l1_weight: 0.1
+  lap_loss_weight: 0.0
+  boundary_top_percent: 10.0
+
+eval:
+  phase: test
+  output_mode: safe
+  num_test: 100000
+  batch_size: 2
+  num_threads: 4
+  depth_unit_scale: 10
+  depth_unit_name: m
+  clip_prediction: true
+  save_layer_maps: 50
+  vis_depth_mode: both
+  error_max: 0.05

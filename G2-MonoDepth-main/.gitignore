@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+.DS_Store
+.pytest_cache/
+*.pt
+*.pth
+checkpoints/
+RGBD_Datasets/
+Hole_Datasets/
+Test_Datasets/
+results/

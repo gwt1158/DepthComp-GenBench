@@ -1,0 +1,92 @@
+# GeoLayerNet — KITTI Depth Completion (PSD/TIP-2025 style). METHOD config.
+# Outdoor protocol, SEPARATE from NYUv2: KittiDataset (dataset.type: kitti), depth
+# normalized by max_depth=80 -> [0,1], depth_unit_scale=80 converts metrics back to
+# metres (reuses the existing eval/metric path; NO eval.py metric change).
+# Formal protocol uses JSONL manifests generated from data/kitti_official_raw.
+# The full official val 6852 is not used for model selection or final reporting.
+
+dataset:
+  type: kitti                    # routes create_loader -> KittiDataset (default "nyu")
+  dataroot: data/kitti_geolayernet
+  source_root: data/kitti_official_raw
+  dataset_mode: depth_completion_kitti
+  dataset_tag: kitti
+  preprocess: none
+  input_nc: 4
+  depth_unit_scale: 80           # [0,1] (norm by 80) -> metres at eval time
+  max_depth: 80.0                # outdoor cap; target_mask = 0 < gt <= 80 m
+  depth_png_scale: 256.0         # official KITTI uint16 depth = png / 256 -> metres
+  kitti_layout: manifest         # formal protocol: JSONL manifest, no scanning full val
+  # ---- PSD-style cropping (NOT the NYU 320x240 resize + 304x228 center crop) ----
+  kitti_crop: [256, 1216]        # eval (val/test): bottom-center crop (H, W) = 1216x256
+  train_crop: [256, 832]         # train: random crop (H, W) = 832x256
+  resize_to: [228, 304]          # GeoLayerNet KITTI formal input size; one resize after crop
+  color_jitter: true             # train-only RGB jitter
+  # ---- preprocessed flat layout dir names (used only when kitti_layout=preprocessed) ----
+  # rgb_dir: rgb
+  # sparse_dir: velodyne_raw
+  # gt_dir: groundtruth
+
+model:
+  name: GeoLayerNet
+  preset: final
+  num_layers: 4
+  layer_encoder: acm_dual
+  layer_source: sparse_depth
+  sparse_layer_support_mode: gaussian_bilateral
+  sparse_layer_expand_radius: 11
+  sparse_layer_sigma_xy: 3.0
+  sparse_layer_rgb_guided: true
+  sparse_layer_rgb_sigma: 0.1
+  residual_scale: 0.1
+  output_mode: safe
+  relation_steps: 2
+  gate_bias_init: -3.0
+  # ---- enhancement switches (GeoLayerNet final = edge010 setting) ----
+  use_coarse_densifier: true
+  coarse_densifier_radii: "5,11"
+  coarse_densifier_rgb_guided: true
+  proxy_use_coarse: true
+  selective_residual: true
+
+train:
+  seed: 42
+  batch_size: 1                  # native KITTI 832x256 crops -> bs 1 to avoid OOM
+  num_threads: 4
+  lr: 0.0001
+  lr_policy: cosine
+  beta1: 0.5
+  weight_decay: 0.0001
+  n_epochs: 60
+  n_epochs_decay: 0
+  cosine_t_max: 60
+  residual_warmup_epochs: 5
+  grad_clip: 1.0
+  val_freq: 1
+  val_phase: dev10
+  val_num_test: 100000
+  val_best_metric: SafeMissing_RMSE_m
+  expected_train_full_samples: 85898
+  expected_val1000_samples: 1000
+
+loss:
+  lambda_teacher_hf: 0.0         # no foundation teacher on KITTI
+  lambda_teacher_grad: 0.0
+  lambda_teacher_normal: 0.0
+  grad_loss_weight: 0.1
+  boundary_l1_weight: 0.1
+  lap_loss_weight: 0.0
+  boundary_top_percent: 10.0
+
+eval:
+  phase: val1000                 # formal final eval: official val_selection_cropped
+  output_mode: safe
+  num_test: 100000
+  batch_size: 1
+  num_threads: 4
+  depth_unit_scale: 80           # metres = normalized x 80
+  depth_unit_name: m
+  clip_prediction: true          # clamps prediction to [1e-3, 1.0] normalized = [~0, 80 m]
+  save_layer_maps: 50
+  vis_depth_mode: both
+  error_max: 0.05

@@ -1,0 +1,44 @@
+# Generic OOD example. Change only dataset.dataroot for another prepared dataset.
+dataset:
+  type: ood_npz
+  dataroot: data/ood/example
+  dataset_mode: rgbd_completion_ood_npz
+  dataset_tag: ood_example
+  preprocess: none
+  input_nc: 4
+  depth_unit_scale: 10
+  resize_to: [228, 304]
+
+model:
+  name: GeoLayerNet
+  preset: final
+  num_layers: 4
+  layer_encoder: acm_dual
+  layer_source: sparse_depth
+  sparse_layer_support_mode: gaussian_bilateral
+  sparse_layer_expand_radius: 11
+  sparse_layer_sigma_xy: 3.0
+  sparse_layer_rgb_guided: true
+  sparse_layer_rgb_sigma: 0.1
+  residual_scale: 0.1
+  output_mode: safe
+  relation_steps: 2
+  gate_bias_init: -3.0
+  use_coarse_densifier: true
+  coarse_densifier_radii: "5,11"
+  coarse_densifier_rgb_guided: true
+  proxy_use_coarse: true
+  selective_residual: true
+
+eval:
+  phase: test
+  output_mode: safe
+  num_test: 100000
+  batch_size: 1
+  num_threads: 4
+  depth_unit_scale: 10
+  depth_unit_name: m
+  clip_prediction: true
+  save_layer_maps: 0
+  vis_depth_mode: both
+  error_max: 0.05
